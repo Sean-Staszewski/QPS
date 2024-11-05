@@ -1,0 +1,2 @@
+# QPS
+Quadratic Problem Solver
