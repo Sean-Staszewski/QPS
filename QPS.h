@@ -47,7 +47,7 @@ public:
     float sigma;	//Convergence variable
 
     //Random params
-    MatrixXd alg_diag;
+    VectorXd alg_diag;
     float zero_tol;
     float delta_l;
     float beta_l;
