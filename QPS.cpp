@@ -100,7 +100,7 @@ QPSolver::QPSolver(MatrixXd &x_, MatrixXd &Q_, MatrixXd &F_, MatrixXd &A_, Matri
     sigma = 0.6;	//Convergence var
 
     //Random params
-    MatrixXd alg_diag = MatrixXd::Zero(10,1);
+    VectorXd alg_diag = VectorXd::Zero(10);
     zero_tol = 1e-16;
     delta_l = 1e-16;
     beta_l = 1e-16;
@@ -139,6 +139,8 @@ QPSolver::QPSolver(MatrixXd &x_, MatrixXd &Q_, MatrixXd &F_, MatrixXd &A_, Matri
     dtsl = MatrixXd::Zero(m, 1);
     mu = (tslack.transpose() * lambda).value() / n;
     fval = 0.5 * (x.transpose() * Q * x) + (F.transpose() * x);
+
+    std::cout << "alg_diag after initialization: " << alg_diag.size() << std::endl;
 }
 
 void QPSolver::Reset(MatrixXd& x_, MatrixXd& Q_, MatrixXd& F_, MatrixXd& A_, MatrixXd& B_) {
@@ -172,6 +174,9 @@ int QPSolver::ModMat(MatrixXd &M) {
 }
 
 void QPSolver::StepDir() {
+
+    std::cout << "alg_diag in StepDir: " << alg_diag.size() << std::endl;
+
     MatrixXd rc = Q * x + A.transpose() * lambda + F; //getting an error here indicating dimensions don't work for the math, suspecting its lambda because it is a vector
     MatrixXd rg = -A * x - tslack + B;
 
@@ -179,6 +184,7 @@ void QPSolver::StepDir() {
     MatrixXd GTgamma = MatrixXd::Zero(n, m);
 
     for (int i = 0; i < m; i++) {
+        std::cout << "in first loop StepDir" << std::endl;
         if (tslack(i) < zero_tol || lambda(i) <= zero_tol) {
             alg_diag(0) = -1;
             alg_diag(2) = -1;
@@ -189,21 +195,22 @@ void QPSolver::StepDir() {
             GTgamma.col(i) = A.row(i).transpose() * lambda(i) / tslack(i);
         }
     }
-    std::cout << "got out of loop" << std::endl;
+    std::cout << "passed first loop StepDir" << std::endl;
 
     if (alg_diag(0) == 0) {
-        std::cout << "made if" << std::endl;
+        std::cout << "made if alg_diag check StepDir" << std::endl;
         MatrixXd LHS = Q + GTgamma * A;
         MatrixXd RHS = -rc + A.transpose() * gamma1;
         dx = LHS.lu().solve(RHS);
         dlam = -gamma1;
 
+        //combine forloops for runtime????????
         for (int i = 0; i < m; i++) {
-            std::cout << "got to loop1" << std::endl;
+            std::cout << "got to loop1 StepDir" << std::endl;
             dlam(i) = dlam(i) + (A.row(i) * dx * lambda(i) / tslack(i)).value();
         }
         for (int i = 0; i < m; i++) {
-            std::cout << "got to loop2" << std::endl;
+            std::cout << "got to loop2 StepDir" << std::endl;
             dtsl(i) = -tslack(i) + (sigma * mu - dlam(i)) * tslack(i) / lambda(i);
         }
     }
@@ -211,6 +218,7 @@ void QPSolver::StepDir() {
 }
 
 void QPSolver::Solve() {
+    std::cout << "alg_diag in Solve: " << alg_diag.size() << std::endl;
 
     float val3 = 1e10;
 
