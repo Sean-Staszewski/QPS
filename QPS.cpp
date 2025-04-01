@@ -100,7 +100,7 @@ QPSolver::QPSolver(MatrixXd &x_, MatrixXd &Q_, MatrixXd &F_, MatrixXd &A_, Matri
     sigma = 0.6;	//Convergence var
 
     //Random params
-    VectorXd alg_diag = VectorXd::Zero(10);
+    alg_diag = VectorXd::Zero(10);
     zero_tol = 1e-16;
     delta_l = 1e-16;
     beta_l = 1e-16;
