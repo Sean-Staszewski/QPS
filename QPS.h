@@ -25,11 +25,11 @@ public:
     int m; // Number of constraints
 
     // Inputs excluding solver_params
-    MatrixXd x; // Current state of the guess, nx1
+    VectorXd x; // Current state of the guess, nx1
     MatrixXd Q; // Quadratic cost (1/2x'*Q*x), nxn
-    MatrixXd F; // Linear cost (f'*x), nx1
+    VectorXd F; // Linear cost (f'*x), nx1
     MatrixXd A; // Matrix associated with linear cost (Ax<=b) mxn
-    MatrixXd B; // Vector associated woth linear cost (Ax<=b) mx1
+    VectorXd B; // Vector associated woth linear cost (Ax<=b) mx1
 
     // Variables that will be determined
     MatrixXd lambda; // Lagrange multiplier
@@ -47,7 +47,7 @@ public:
     float sigma;	//Convergence variable
 
     //Random params
-    VectorXd alg_diag;
+    VectorXd  alg_diag;
     float zero_tol;
     float delta_l;
     float beta_l;
